@@ -1,3 +1,5 @@
+var storedImages = [];
+
 var emailData = [
   {
     Name: 'Selma Rose',
@@ -167,24 +169,62 @@ var defaultRTE = new ej.richtexteditor.RichTextEditor({
       'Styles',
     ],
   },
-  imageUploadSuccess: function (event) {
-    alert('imagePasted');
-  },
+  actionComplete: onActionSuccess,
+  afterImageDelete: onImageDelete,
   insertImageSettings: {
     allowedTypes: ['.jpeg', '.jpg', '.png'],
     display: 'inline',
     width: 'auto',
     height: 'auto',
-    saveFormat: 'Blob',
+    saveFormat: 'Base64',
   },
 });
 defaultRTE.appendTo('#defaultRTE');
 
-/**
- * Mention default sample
- */
-var messageData = new ej.dropdowns.Mention({
-  dataSource: emailData,
-  fields: { text: 'Name' },
-});
-messageData.appendTo('#defaultRTE');
+function generateUUID() {
+  // Public Domain/MIT
+  var d = new Date().getTime(); //Timestamp
+  var d2 =
+    (typeof performance !== 'undefined' &&
+      performance.now &&
+      performance.now() * 1000) ||
+    0; //Time in microseconds since page-load or 0 if unsupported
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    var r = Math.random() * 16; //random number between 0 and 16
+    if (d > 0) {
+      //Use timestamp until depleted
+      r = (d + r) % 16 | 0;
+      d = Math.floor(d / 16);
+    } else {
+      //Use microseconds since page-load if supported
+      r = (d2 + r) % 16 | 0;
+      d2 = Math.floor(d2 / 16);
+    }
+    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+  });
+}
+
+function onActionSuccess(args) {
+  //NARROW THE SUCCESS TO ONLY REPORT ON IMAGES BEING INSERTED/DROPPED
+  if (args.requestType == 'Images') {
+    //SRC OF THE ELEMENT WILL BE ALREADY AS BASE64 AS DETERMINED BY THE saveFormat: 'Base64'
+    console.log(args);
+    console.log(args.elements[0].src);
+
+    args.elements[0].id = generateUUID(); //USE THE BUILT IN JARVIS ONE :)
+    storedImages.push(args.elements[0].id);
+    //AT THIS STAGE THE ORIGINAL SAVE TO BLOB CAN BE HOOKED IN - IMAGE WILL NEED AN IDENTIFIER THATS RETURNED BACK TO THE EDITOR SO THAT WHEN DELETED FROM THE EDITOR THE IMAGE IN THE BLOB IS ALSO DELETED
+    console.log('Whats stored in the blob?');
+    console.log(storedImages);
+  }
+}
+
+function onImageDelete(args) {
+  var imageID = args.element.getAttribute('id');
+
+  var index = storedImages.findIndex((num) => num === imageID);
+
+  console.log('Going to delete ' + imageID + ' from the blob @ index ' + index);
+
+  storedImages.splice(index, 1);
+}
