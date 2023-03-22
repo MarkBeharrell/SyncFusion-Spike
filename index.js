@@ -154,16 +154,6 @@ var defaultRTE = new ej.richtexteditor.RichTextEditor({
       'Redo',
     ],
   },
-  fileManagerSettings: {
-    enable: true,
-    path: '/Pictures/Food',
-    ajaxSettings: {
-      url: hostUrl + 'api/FileManager/FileOperations',
-      getImageUrl: hostUrl + 'api/FileManager/GetImage',
-      uploadUrl: hostUrl + 'api/FileManager/Upload',
-      downloadUrl: hostUrl + 'api/FileManager/Download',
-    },
-  },
   quickToolbarSettings: {
     table: [
       'TableHeader',
@@ -176,6 +166,16 @@ var defaultRTE = new ej.richtexteditor.RichTextEditor({
       'TableCellVerticalAlign',
       'Styles',
     ],
+  },
+  imageUploadSuccess: function (event) {
+    alert('imagePasted');
+  },
+  insertImageSettings: {
+    allowedTypes: ['.jpeg', '.jpg', '.png'],
+    display: 'inline',
+    width: 'auto',
+    height: 'auto',
+    saveFormat: 'Blob',
   },
 });
 defaultRTE.appendTo('#defaultRTE');
