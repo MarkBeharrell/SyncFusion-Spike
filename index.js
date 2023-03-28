@@ -181,6 +181,21 @@ var defaultRTE = new ej.richtexteditor.RichTextEditor({
 });
 defaultRTE.appendTo('#defaultRTE');
 
+// Initialize Mention control.
+var emailObj = new ej.dropdowns.Mention({
+  dataSource: emailData,
+  fields: { text: 'Name' },
+  suggestionCount: 8,
+  displayTemplate: '<a title=${EmailId}>@${Name}</a>',
+  itemTemplate: '<table><tr><td><div id="mention-TemplateList"><img class="mentionEmpImage" src="../../../images/${EmployeeImage}" alt="employee" /><span class="e-badge e-badge-success e-badge-overlap e-badge-dot e-badge-bottom ${Status}"></span></div></td><td><span class="person">${Name}</span><span class="email">${EmailId}</span></td</tr></table>',
+  popupWidth: '250px',
+  popupHeight: '200px',
+  target: '#mention_integration_rte-edit-view',
+  allowSpaces: true
+});
+emailObj.appendTo('#mentionEditor');
+
+
 function generateUUID() {
   // Public Domain/MIT
   var d = new Date().getTime(); //Timestamp
